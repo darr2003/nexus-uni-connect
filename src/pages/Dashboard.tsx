@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -122,30 +123,42 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Accesos Rápidos</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {quickActions.map((action, index) => (
-            <Card key={index} className="group hover:shadow-md transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-lg ${action.color}`}>
-                    <action.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <CardTitle className="text-lg">{action.title}</CardTitle>
-                    <CardDescription>{action.description}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button asChild className="w-full group-hover:bg-primary/90 transition-colors">
-                  <Link to={action.link}>
-                    Acceder
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Carousel
+          opts={{
+            align: "start",
+            slidesToScroll: 1,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {quickActions.map((action, index) => (
+              <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+                <Card className="group hover:shadow-md transition-shadow h-full">
+                  <CardHeader>
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-lg ${action.color}`}>
+                        <action.icon className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <CardTitle className="text-lg">{action.title}</CardTitle>
+                        <CardDescription>{action.description}</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Button asChild className="w-full group-hover:bg-primary/90 transition-colors">
+                      <Link to={action.link}>
+                        Acceder
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-0" />
+          <CarouselNext className="right-0" />
+        </Carousel>
       </div>
 
       {/* Notifications */}

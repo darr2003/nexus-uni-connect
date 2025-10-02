@@ -4,6 +4,7 @@ import { AppSidebar } from '@/components/AppSidebar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { HelpCircle } from 'lucide-react';
+import { NotificationButton } from '@/components/NotificationButton';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <SidebarTrigger />
             
             <div className="flex items-center gap-4">
+              <NotificationButton />
               <Button variant="ghost" size="sm" className="flex items-center gap-2">
                 <HelpCircle className="h-4 w-4" />
                 Ayuda

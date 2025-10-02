@@ -4,13 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 const Payments = () => {
   const { toast } = useToast();
-  const [selectedPayment, setSelectedPayment] = useState('');
+  const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
 
   const pendingPayments = [
     {
@@ -25,6 +25,48 @@ const Payments = () => {
       concept: 'Laboratorios',
       amount: 150000,
       dueDate: '2024-02-20',
+      status: 'pending'
+    },
+    {
+      id: 'BIB-2024-1',
+      concept: 'Biblioteca - Carnet Anual',
+      amount: 85000,
+      dueDate: '2024-02-25',
+      status: 'pending'
+    },
+    {
+      id: 'SEG-2024',
+      concept: 'Seguro Estudiantil',
+      amount: 120000,
+      dueDate: '2024-02-28',
+      status: 'pending'
+    },
+    {
+      id: 'DEP-2024-1',
+      concept: 'Deportes y Recreación',
+      amount: 95000,
+      dueDate: '2024-03-01',
+      status: 'pending'
+    },
+    {
+      id: 'MAT-DID-2024-1',
+      concept: 'Material Didáctico',
+      amount: 180000,
+      dueDate: '2024-03-05',
+      status: 'pending'
+    },
+    {
+      id: 'CERT-2024',
+      concept: 'Certificado de Estudios',
+      amount: 45000,
+      dueDate: '2024-03-10',
+      status: 'pending'
+    },
+    {
+      id: 'GRAD-PHOTO-2024',
+      concept: 'Fotografía de Grado',
+      amount: 65000,
+      dueDate: '2024-03-12',
       status: 'pending'
     }
   ];
@@ -56,11 +98,25 @@ const Payments = () => {
     }).format(amount);
   };
 
+  const handlePaymentToggle = (paymentId: string) => {
+    setSelectedPayments(prev => 
+      prev.includes(paymentId) 
+        ? prev.filter(id => id !== paymentId)
+        : [...prev, paymentId]
+    );
+  };
+
+  const getSelectedTotal = () => {
+    return pendingPayments
+      .filter(p => selectedPayments.includes(p.id))
+      .reduce((sum, p) => sum + p.amount, 0);
+  };
+
   const handlePayment = () => {
-    if (!selectedPayment) {
+    if (selectedPayments.length === 0) {
       toast({
         title: "Error",
-        description: "Por favor selecciona un concepto de pago",
+        description: "Por favor selecciona al menos un concepto de pago",
         variant: "destructive",
       });
       return;
@@ -68,7 +124,7 @@ const Payments = () => {
 
     toast({
       title: "Redirigiendo a pasarela de pago",
-      description: "Serás redirigido al sistema de pagos en línea",
+      description: `Serás redirigido al sistema de pagos en línea para ${selectedPayments.length} concepto${selectedPayments.length > 1 ? 's' : ''}`,
     });
   };
 
@@ -168,26 +224,49 @@ const Payments = () => {
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Concepto de Pago</label>
-                  <Select value={selectedPayment} onValueChange={setSelectedPayment}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona un concepto" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {pendingPayments.map((payment) => (
-                        <SelectItem key={payment.id} value={payment.id}>
-                          {payment.concept} - {formatCurrency(payment.amount)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <label className="text-sm font-medium">Selecciona los conceptos a pagar</label>
+                  <div className="space-y-3">
+                    {pendingPayments.map((payment) => (
+                      <div 
+                        key={payment.id} 
+                        className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                      >
+                        <Checkbox 
+                          id={payment.id}
+                          checked={selectedPayments.includes(payment.id)}
+                          onCheckedChange={() => handlePaymentToggle(payment.id)}
+                        />
+                        <label 
+                          htmlFor={payment.id}
+                          className="flex-1 flex items-center justify-between cursor-pointer"
+                        >
+                          <span className="text-sm font-medium">{payment.concept}</span>
+                          <span className="text-sm font-bold">{formatCurrency(payment.amount)}</span>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+
+                {selectedPayments.length > 0 && (
+                  <div className="p-4 bg-accent/20 rounded-lg border border-primary/20">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">Total seleccionado:</span>
+                      <span className="text-xl font-bold text-primary">
+                        {formatCurrency(getSelectedTotal())}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {selectedPayments.length} concepto{selectedPayments.length > 1 ? 's' : ''} seleccionado{selectedPayments.length > 1 ? 's' : ''}
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid gap-4 md:grid-cols-3">
                   <Button 
                     onClick={handlePayment}
                     className="flex items-center gap-2"
-                    disabled={!selectedPayment}
+                    disabled={selectedPayments.length === 0}
                   >
                     <CreditCard className="h-4 w-4" />
                     Tarjeta de Crédito/Débito
@@ -195,14 +274,14 @@ const Payments = () => {
                   <Button 
                     variant="outline"
                     onClick={handlePayment}
-                    disabled={!selectedPayment}
+                    disabled={selectedPayments.length === 0}
                   >
                     PSE
                   </Button>
                   <Button 
                     variant="outline"
                     onClick={handlePayment}
-                    disabled={!selectedPayment}
+                    disabled={selectedPayments.length === 0}
                   >
                     Transferencia Bancaria
                   </Button>
