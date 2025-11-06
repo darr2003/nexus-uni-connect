@@ -31,8 +31,7 @@ const menuItems = [
   { title: 'Dashboard', url: '/dashboard', icon: Home },
   { title: 'Información Personal', url: '/personal-info', icon: User },
   { title: 'Matrícula', url: '/enrollment', icon: GraduationCap },
-  { title: 'Pago en Línea', url: '/payments', icon: CreditCard },
-  { title: 'Estado de Cuenta', url: '/account-status', icon: Receipt },
+  { title: 'Finanzas', url: '/finances', icon: Receipt },
   { title: 'Servicios', url: '/services', icon: Settings },
 ];
 

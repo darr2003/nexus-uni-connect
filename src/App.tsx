@@ -10,8 +10,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import PersonalInfo from "./pages/PersonalInfo";
 import Enrollment from "./pages/Enrollment";
-import Payments from "./pages/Payments";
-import AccountStatus from "./pages/AccountStatus";
+import Finances from "./pages/Finances";
 import Services from "./pages/Services";
 import NotFound from "./pages/NotFound";
 
@@ -77,17 +76,10 @@ const App = () => (
                 </Layout>
               </ProtectedRoute>
             } />
-            <Route path="/payments" element={
+            <Route path="/finances" element={
               <ProtectedRoute>
                 <Layout>
-                  <Payments />
-                </Layout>
-              </ProtectedRoute>
-            } />
-            <Route path="/account-status" element={
-              <ProtectedRoute>
-                <Layout>
-                  <AccountStatus />
+                  <Finances />
                 </Layout>
               </ProtectedRoute>
             } />

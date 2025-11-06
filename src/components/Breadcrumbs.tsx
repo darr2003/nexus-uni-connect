@@ -14,8 +14,7 @@ const routeNames: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/personal-info': 'Información Personal',
   '/enrollment': 'Matrícula',
-  '/payments': 'Pago en Línea',
-  '/account-status': 'Estado de Cuenta',
+  '/finances': 'Finanzas',
   '/services': 'Servicios',
 };
 

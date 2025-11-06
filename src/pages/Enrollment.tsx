@@ -96,13 +96,17 @@ const Enrollment = () => {
                   </div>
                   
                   {period.status === 'available' && (
-                    <Button className="w-full mt-4">
+                    <Button className="w-full mt-4" onClick={() => {
+                      alert('El sistema de matrícula en línea te permitirá inscribir asignaturas según tu malla curricular y disponibilidad. Contacta con tu Director de Carrera para autorización.');
+                    }}>
                       Iniciar Matrícula
                     </Button>
                   )}
                   
                   {period.status === 'completed' && (
-                    <Button variant="outline" className="w-full mt-4">
+                    <Button variant="outline" className="w-full mt-4" onClick={() => {
+                      alert(`Matrícula ${period.period} completada exitosamente el ${period.endDate}. Total de créditos: 18.`);
+                    }}>
                       Ver Detalles
                     </Button>
                   )}
@@ -146,21 +150,29 @@ const Enrollment = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            <Button variant="outline" className="justify-start gap-2">
+            <Button variant="outline" className="justify-start gap-2" onClick={() => {
+              alert('Horarios de clases para el semestre 2024-1. Consulta con tu Escuela para más información sobre salas y horarios actualizados.');
+            }}>
               <Calendar className="h-4 w-4" />
               Ver Horarios
             </Button>
-            <Button variant="outline" className="justify-start gap-2">
+            <Button variant="outline" className="justify-start gap-2" onClick={() => {
+              alert('Consulta los pre-requisitos de cada asignatura en tu malla curricular. Contacta con la Dirección de Docencia para más información.');
+            }}>
               <GraduationCap className="h-4 w-4" />
               Pre-requisitos
             </Button>
-            <Button variant="outline" className="justify-start gap-2">
+            <Button variant="outline" className="justify-start gap-2" onClick={() => {
+              alert('Para solicitar cambios de asignatura (retiro, adición o cambio de sección), contacta con tu Director de Carrera durante el período de ajuste de matrícula.');
+            }}>
               <AlertCircle className="h-4 w-4" />
               Solicitar Cambios
             </Button>
-            <Button variant="outline" className="justify-start gap-2">
-              <CheckCircle className="h-4 w-4" />
-              Certificado de Matrícula
+            <Button asChild variant="outline" className="justify-start gap-2">
+              <a href="/services?certificate=alumno-regular">
+                <CheckCircle className="h-4 w-4" />
+                Certificado de Matrícula
+              </a>
             </Button>
           </div>
         </CardContent>

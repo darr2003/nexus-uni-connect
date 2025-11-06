@@ -7,14 +7,12 @@ import {
   Receipt,
   Settings,
   Calendar,
-  BookOpen,
   AlertCircle
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -25,35 +23,32 @@ const Dashboard = () => {
       description: 'Ver y actualizar datos personales',
       icon: User,
       link: '/personal-info',
-      color: 'bg-primary'
+      color: 'bg-primary',
+      priority: 'normal'
     },
     {
       title: 'Matrícula',
       description: 'Gestionar proceso de matrícula',
       icon: GraduationCap,
       link: '/enrollment',
-      color: 'bg-accent'
+      color: 'bg-accent',
+      priority: 'normal'
     },
     {
-      title: 'Pago en Línea',
-      description: 'Realizar pagos y consultar estado',
-      icon: CreditCard,
-      link: '/payments',
-      color: 'bg-primary'
-    },
-    {
-      title: 'Estado de Cuenta',
-      description: 'Consultar movimientos financieros',
+      title: 'Finanzas',
+      description: 'Pagos, estado de cuenta, becas y documentos',
       icon: Receipt,
-      link: '/account-status',
-      color: 'bg-accent'
+      link: '/finances',
+      color: 'bg-destructive',
+      priority: 'high'
     },
     {
       title: 'Servicios',
       description: 'Solicitar certificados y trámites',
       icon: Settings,
       link: '/services',
-      color: 'bg-primary'
+      color: 'bg-accent',
+      priority: 'normal'
     }
   ];
 
@@ -77,7 +72,7 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-foreground">
-          ¡Bienvenido/a, {user?.firstName}!
+          ¡Bienvenido, {user?.firstName}!
         </h1>
         <p className="text-muted-foreground">
           Estudiante ID: {user?.studentId} • {user?.program}
@@ -123,68 +118,131 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Accesos Rápidos</h2>
-        <Carousel
-          opts={{
-            align: "start",
-            slidesToScroll: 1,
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-4">
-            {quickActions.map((action, index) => (
-              <CarouselItem key={index} className="pl-4 basis-full md:basis-1/2 lg:basis-1/4">
-                <Card className="group hover:shadow-md transition-shadow h-full">
-                  <CardHeader>
-                    <div className="flex items-center gap-4">
-                      <div className={`p-3 rounded-lg ${action.color}`}>
-                        <action.icon className="h-6 w-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-lg">{action.title}</CardTitle>
-                        <CardDescription>{action.description}</CardDescription>
-                      </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {quickActions.map((action, index) => (
+            <Card 
+              key={index} 
+              className={`group hover:shadow-lg transition-all hover:scale-[1.02] ${
+                action.priority === 'high' ? 'ring-2 ring-destructive shadow-lg' : ''
+              }`}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-lg ${action.color} shrink-0`}>
+                    <action.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold">{action.title}</h3>
+                      {action.priority === 'high' && (
+                        <Badge variant="destructive" className="text-xs">Importante</Badge>
+                      )}
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Button asChild className="w-full group-hover:bg-primary/90 transition-colors">
+                    <p className="text-sm text-muted-foreground mb-3">{action.description}</p>
+                    <Button 
+                      asChild 
+                      size="sm" 
+                      className="w-full"
+                      variant={action.priority === 'high' ? 'destructive' : 'default'}
+                    >
                       <Link to={action.link}>
                         Acceder
                       </Link>
                     </Button>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="left-0" />
-          <CarouselNext className="right-0" />
-        </Carousel>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
+
+      {/* Becas y Beneficios - Acceso Directo */}
+      <Card className="border-accent shadow-md">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-lg bg-accent">
+                <Receipt className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  Becas y Beneficios Activos
+                </CardTitle>
+                <CardDescription>
+                  Consulta tus becas y pagos bancarios directamente
+                </CardDescription>
+              </div>
+            </div>
+            <Button asChild variant="outline">
+              <Link to="/finances?tab=scholarships">
+                Ver Todo
+              </Link>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-2">
+            <Button
+              asChild
+              variant="ghost"
+              className="h-auto p-4 bg-accent/10 rounded-lg border border-accent/20 hover:bg-accent/20 transition-colors justify-start"
+            >
+              <Link to="/finances?tab=scholarships">
+                <div className="w-full">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Total en Becas</span>
+                    <Badge className="bg-accent text-accent-foreground">Activas</Badge>
+                  </div>
+                  <p className="text-2xl font-bold text-accent">$950.000</p>
+                  <p className="text-xs text-muted-foreground mt-1">2 becas activas • Semestre 2024-1</p>
+                </div>
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              className="h-auto p-4 bg-primary/10 rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors justify-start"
+            >
+              <Link to="/finances?tab=bank">
+                <div className="w-full">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-muted-foreground">Pagos Bancarios</span>
+                    <Badge className="bg-primary/20 text-primary-foreground">Completados</Badge>
+                  </div>
+                  <p className="text-2xl font-bold text-primary">$1.850.000</p>
+                  <p className="text-xs text-muted-foreground mt-1">2 pagos recibidos en cuenta</p>
+                </div>
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Notifications */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Notificaciones</h2>
         <div className="space-y-3">
           {notifications.map((notification, index) => (
-            <Card key={index}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0">
-                    {notification.type === 'warning' ? (
-                      <AlertCircle className="h-5 w-5 text-amber-500" />
-                    ) : (
-                      <AlertCircle className="h-5 w-5 text-blue-500" />
-                    )}
+            <Card key={index} className="overflow-hidden">
+              <CardContent className="p-0">
+                <div className="flex items-center gap-3 p-4">
+                  <div className={`p-2 rounded-lg shrink-0 ${
+                    notification.type === 'warning' ? 'bg-amber-100' : 'bg-blue-100'
+                  }`}>
+                    <AlertCircle className={`h-5 w-5 ${
+                      notification.type === 'warning' ? 'text-amber-600' : 'text-blue-600'
+                    }`} />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-medium">{notification.title}</h3>
-                      <Badge variant={notification.type === 'warning' ? 'destructive' : 'secondary'}>
+                      <h3 className="font-semibold text-sm">{notification.title}</h3>
+                      <Badge variant={notification.type === 'warning' ? 'destructive' : 'secondary'} className="text-xs">
                         {notification.type === 'warning' ? 'Urgente' : 'Info'}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">{notification.message}</p>
-                    <p className="text-xs text-muted-foreground">{notification.date}</p>
+                    <p className="text-sm text-muted-foreground">{notification.message}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{notification.date}</p>
                   </div>
                 </div>
               </CardContent>

@@ -315,23 +315,21 @@ const PersonalInfo = () => {
               {bankAccounts.length > 0 && (
                 <div className="space-y-3">
                   <Label>Cuentas Registradas</Label>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {bankAccounts.map((account) => (
-                      <div key={account.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-full bg-primary/10">
-                            <CreditCard className="h-4 w-4 text-primary" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium">{account.bankName}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {account.accountType} • {account.accountNumber}
-                            </p>
-                          </div>
+                      <div key={account.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/5 transition-colors">
+                        <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+                          <CreditCard className="h-4 w-4 text-primary" />
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm">{account.bankName}</h4>
+                          <p className="text-xs text-muted-foreground">
+                            {account.accountType} • {account.accountNumber}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
                           {account.isDefault ? (
-                            <Badge className="bg-accent/20 text-accent-foreground">
+                            <Badge className="bg-accent/20 text-accent-foreground text-xs">
                               Predeterminada
                             </Badge>
                           ) : (
@@ -340,7 +338,7 @@ const PersonalInfo = () => {
                               size="sm"
                               onClick={() => handleSetDefaultAccount(account.id)}
                             >
-                              Hacer Predeterminada
+                              Predeterminada
                             </Button>
                           )}
                           <Button

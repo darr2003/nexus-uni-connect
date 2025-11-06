@@ -57,6 +57,33 @@ All colors MUST be HSL.
     --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(220 14% 98%));
     --shadow-university: 0 10px 30px -10px hsl(var(--primary) / 0.1);
     --shadow-card: 0 4px 20px -4px hsl(225 39% 21% / 0.1);
+    
+    /* Enhanced toast/dialog styles */
+    --toast-bg: 0 0% 100%;
+    --toast-border: 220 13% 91%;
+  }
+
+  /* Enhanced toast positioning and size */
+  [data-sonner-toaster] {
+    --width: 480px !important;
+    --toast-gap: 16px !important;
+  }
+
+  [data-sonner-toast] {
+    box-shadow: 0 10px 40px -10px hsl(225 39% 21% / 0.2) !important;
+    border: 2px solid hsl(var(--toast-border)) !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+  }
+
+  [data-sonner-toast][data-type="success"] {
+    background: hsl(var(--accent) / 0.1) !important;
+    border-color: hsl(var(--accent)) !important;
+  }
+
+  [data-sonner-toast][data-type="error"] {
+    background: hsl(var(--destructive) / 0.1) !important;
+    border-color: hsl(var(--destructive)) !important;
   }
 
   .dark {

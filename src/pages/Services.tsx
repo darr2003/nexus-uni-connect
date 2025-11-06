@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Settings, FileText, Award, Clock, CheckCircle, Send, Download } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,10 +13,22 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 const Services = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [selectedService, setSelectedService] = useState('');
   const [requestDescription, setRequestDescription] = useState('');
   const [selectedCertificateType, setSelectedCertificateType] = useState('');
   const [selectedPurpose, setSelectedPurpose] = useState('');
+
+  useEffect(() => {
+    const certificate = searchParams.get('certificate');
+    if (certificate === 'paz-y-salvo') {
+      setSelectedCertificateType('Paz y Salvo');
+      setSelectedPurpose('Fines que estime conveniente');
+    } else if (certificate === 'concentracion-notas') {
+      setSelectedCertificateType('Concentración de Notas');
+      setSelectedPurpose('Fines que estime conveniente');
+    }
+  }, [searchParams]);
 
   const certificateTypes = [
     'Alumno Regular',
@@ -28,7 +41,8 @@ const Services = () => {
     'Situación Académica',
     'Arancel y Matrícula',
     'Postulación a Prácticas',
-    'Seguro de Prácticas'
+    'Seguro de Prácticas',
+    'Paz y Salvo'
   ];
 
   const certificatePurposes = [
@@ -47,7 +61,8 @@ const Services = () => {
     'Concentración de Notas',
     'Arancel y Matrícula',
     'Postulación a Prácticas',
-    'Seguro de Prácticas'
+    'Seguro de Prácticas',
+    'Paz y Salvo'
   ];
 
   const conventionalCertificates = [
@@ -193,11 +208,21 @@ const Services = () => {
     const isExempt = exemptCertificates.includes(selectedCertificateType);
     
     toast({
-      title: "Solicitud enviada",
+      title: "Solicitud enviada exitosamente",
       description: isExempt 
-        ? "Tu certificado se descargará automáticamente y será enviado a tu correo electrónico."
-        : "Tu solicitud ha sido procesada. Recibirás una notificación cuando esté listo.",
+        ? `Tu certificado de ${selectedCertificateType} se ha generado. Descargándose automáticamente y será enviado a tu correo institucional.`
+        : `Tu solicitud de certificado de ${selectedCertificateType} ha sido procesada. Recibirás una notificación cuando esté listo para retirar en la Dirección de Registro Académico.`,
     });
+    
+    // Simular descarga para certificados exentos
+    if (isExempt) {
+      setTimeout(() => {
+        toast({
+          title: "Descarga completada",
+          description: `Certificado_${selectedCertificateType.replace(/\s/g, '_')}_2024.pdf`,
+        });
+      }, 2000);
+    }
     
     setSelectedCertificateType('');
     setSelectedPurpose('');
@@ -466,30 +491,28 @@ const Services = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {issuedCertificates.map((cert) => (
-                  <div key={cert.id} className="flex items-center justify-between p-4 border rounded-lg hover:border-primary/50 transition-colors">
-                    <div className="flex items-center gap-4">
-                      <div className="p-2 rounded-full bg-primary/10">
-                        <Award className="h-4 w-4 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">{cert.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Solicitado: {cert.requestDate} • Emitido: {cert.issueDate}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {cert.type} • {cert.size}
-                        </p>
-                      </div>
+                  <div key={cert.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/5 transition-colors">
+                    <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+                      <Award className="h-4 w-4 text-primary" />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className="bg-accent/20 text-accent-foreground">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-sm">{cert.name}</h3>
+                      <p className="text-xs text-muted-foreground">
+                        {cert.requestDate} • {cert.issueDate}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {cert.type} • {cert.size}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge className="bg-accent/20 text-accent-foreground text-xs">
                         <CheckCircle className="h-3 w-3 mr-1" />
                         Disponible
                       </Badge>
-                      <Button size="sm" className="flex items-center gap-2">
-                        <Download className="h-4 w-4" />
+                      <Button size="sm">
+                        <Download className="h-4 w-4 mr-2" />
                         Descargar
                       </Button>
                     </div>
@@ -512,28 +535,31 @@ const Services = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {requests.map((request) => {
                   const StatusIcon = getStatusIcon(request.status);
                   return (
-                    <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="p-2 rounded-full bg-primary/10">
-                          <StatusIcon className="h-4 w-4 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{request.type}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {request.description}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Solicitado: {request.date}
-                          </p>
-                        </div>
+                    <div key={request.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-accent/5 transition-colors">
+                      <div className={`p-2 rounded-lg shrink-0 ${
+                        request.status === 'completed' ? 'bg-accent/20' :
+                        request.status === 'in_progress' ? 'bg-blue-100' : 'bg-amber-100'
+                      }`}>
+                        <StatusIcon className={`h-4 w-4 ${
+                          request.status === 'completed' ? 'text-accent' :
+                          request.status === 'in_progress' ? 'text-blue-600' : 'text-amber-600'
+                        }`} />
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium mb-1">ID: {request.id}</p>
-                        <Badge className={getStatusColor(request.status)}>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-sm">{request.type}</h3>
+                        <p className="text-xs text-muted-foreground">
+                          {request.description}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {request.date}
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <Badge className={`${getStatusColor(request.status)} text-xs mb-1`}>
                           {getStatusText(request.status)}
                         </Badge>
                       </div>
